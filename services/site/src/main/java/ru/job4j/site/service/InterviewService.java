@@ -67,7 +67,7 @@ public class InterviewService {
      * @return boolean userId == submitterId
      */
     public boolean isAuthor(UserInfoDTO userInfoDTO, InterviewDTO interviewDTO) {
-        return userInfoDTO.getId() == interviewDTO.getSubmitterId();
+        return userInfoDTO.getId() == interviewDTO.getSubmitter().getId();
     }
 
     /**

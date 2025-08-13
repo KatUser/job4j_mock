@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.checkdev.mock.domain.Feedback;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.domain.Submitter;
 import ru.checkdev.mock.mapper.FeedbackMapper;
 
 import javax.persistence.EntityManager;
@@ -31,12 +32,11 @@ class FeedbackRepositoryTest {
     private EntityManager entityManager;
     @Autowired
     private FeedbackRepository repository;
-
     @BeforeEach
     public void initTable() {
         interview = new Interview();
         interview.setMode(1);
-        interview.setSubmitterId(1);
+        interview.setSubmitter(new Submitter(1, "name"));
         interview.setTitle("title");
         interview.setAdditional("additional");
         interview.setContactBy("mail@mail");

@@ -8,6 +8,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.checkdev.mock.domain.Feedback;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.domain.Submitter;
 import ru.checkdev.mock.dto.FeedbackDTO;
 import ru.checkdev.mock.mapper.FeedbackMapper;
 import ru.checkdev.mock.repository.FeedbackRepository;
@@ -30,7 +31,7 @@ import static org.mockito.Mockito.when;
 class FeedbackJpaServiceTest {
     private final Interview interview = Interview.of()
             .mode(1)
-            .submitterId(1)
+            .submitter(new Submitter(1, "submitter"))
             .title("title")
             .additional("additional")
             .contactBy("mail@mail")

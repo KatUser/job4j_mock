@@ -14,13 +14,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.checkdev.mock.MockSrv;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.domain.Submitter;
 import ru.checkdev.mock.service.InterviewService;
 
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -40,7 +41,7 @@ class InterviewControllerTest {
     private Interview interview = Interview.of()
             .id(1)
             .mode(2)
-            .submitterId(3)
+            .submitter(new Submitter(3, "name"))
             .title("test_title")
             .additional("test_additional")
             .contactBy("test_contact_by")
@@ -53,7 +54,7 @@ class InterviewControllerTest {
     private Interview emptyInterview = Interview.of()
             .id(1)
             .mode(0)
-            .submitterId(0)
+            .submitter(null)
             .title(null)
             .additional(null)
             .contactBy(null)

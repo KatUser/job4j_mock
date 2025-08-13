@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(classes = SiteSrv.class)
@@ -59,7 +59,8 @@ public class InterviewsControllerTest {
             interview.setId(i);
             interview.setMode(1);
             interview.setStatus(1);
-            interview.setSubmitterId(1);
+            var submitter = new SubmitterDTO(1, "test name");
+            interview.setSubmitter(submitter);
             interview.setTitle(String.format("Interview_%d", i));
             interview.setAdditional("Some text");
             interview.setContactBy("Some contact");

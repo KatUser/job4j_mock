@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.checkdev.mock.MockSrv;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.domain.Submitter;
 import ru.checkdev.mock.domain.Wisher;
 
 import java.sql.Timestamp;
@@ -33,7 +34,7 @@ class WisherServiceTest {
     private Interview interview = Interview.of()
             .id(1)
             .mode(2)
-            .submitterId(3)
+            .submitter(new Submitter(3, "name"))
             .title("test_title")
             .additional("test_additional")
             .contactBy("test_contact_by")

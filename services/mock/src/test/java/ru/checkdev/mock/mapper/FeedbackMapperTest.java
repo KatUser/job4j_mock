@@ -3,6 +3,7 @@ package ru.checkdev.mock.mapper;
 import org.junit.jupiter.api.Test;
 import ru.checkdev.mock.domain.Feedback;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.domain.Submitter;
 import ru.checkdev.mock.dto.FeedbackDTO;
 
 import static org.assertj.core.api.Assertions.*;
@@ -17,8 +18,8 @@ class FeedbackMapperTest {
 
     @Test
     void whenMapperGetFeedbackDTOThenEquals() {
-        var interview = new Interview(1, 1, 1, 1,
-                "titel", "add", "contact",
+        var interview = new Interview(1, 1, 1, new Submitter(2, "test name"),
+                "title", "add", "contact",
                 "approxim", null, 1);
         var feedback = new Feedback(1, interview, 2, 1, "text", 5);
         var expected = new FeedbackDTO(feedback.getId(), feedback.getInterview().getId(), feedback.getUserId(),
@@ -29,8 +30,8 @@ class FeedbackMapperTest {
 
     @Test
     void whenMapperGetFeedbackThenEquals() {
-        var interview = new Interview(1, 1, 1, 1,
-                "titel", "add", "contact",
+        var interview = new Interview(1, 1, 1, new Submitter(2, "test name"),
+                "title", "add", "contact",
                 "approxim", null, 1);
         var feedbackDTO = new FeedbackDTO(1, interview.getId(), 1,
                 2, "text", 5);

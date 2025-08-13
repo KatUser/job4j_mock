@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.domain.Submitter;
 
 import javax.persistence.EntityManager;
 import java.sql.Timestamp;
@@ -47,8 +48,9 @@ class InterviewRepositoryTest {
     @Test
     public void whenInterviewFindByType() {
         var interview = new Interview();
+        var submitter = new Submitter(1, "submitter");
         interview.setMode(1);
-        interview.setSubmitterId(1);
+        interview.setSubmitter(submitter);
         interview.setTitle("title");
         interview.setAdditional("additional");
         interview.setContactBy("contact");
@@ -80,7 +82,8 @@ class InterviewRepositoryTest {
     public void whenInterviewFindByTopicId() {
         var interview = new Interview();
         interview.setMode(1);
-        interview.setSubmitterId(1);
+        var submitter = new Submitter(1, "submitter");
+        interview.setSubmitter(submitter);
         interview.setTitle("title");
         interview.setAdditional("additional");
         interview.setContactBy("contact");
@@ -103,7 +106,8 @@ class InterviewRepositoryTest {
                 .range(0, 8).mapToObj(i -> {
                     var interview = new Interview();
                     interview.setMode(1);
-                    interview.setSubmitterId(1);
+                    var submitter = new Submitter(1, "submitter");
+                    interview.setSubmitter(submitter);
                     interview.setTitle(String.format("Interview_%d", i));
                     interview.setAdditional(String.format("Some text_%d", i));
                     interview.setContactBy("Some contact");
@@ -145,7 +149,8 @@ class InterviewRepositoryTest {
         var interview = new Interview();
         interview.setMode(1);
         interview.setStatus(1);
-        interview.setSubmitterId(1);
+        var submitter = new Submitter(1, "submitter");
+        interview.setSubmitter(submitter);
         interview.setTitle("title");
         interview.setAdditional("additional");
         interview.setContactBy("contact");
@@ -167,7 +172,8 @@ class InterviewRepositoryTest {
         var interview = new Interview();
         interview.setMode(1);
         interview.setStatus(1);
-        interview.setSubmitterId(1);
+        var submitter = new Submitter(1, "submitter");
+        interview.setSubmitter(submitter);
         interview.setTitle("title");
         interview.setAdditional("additional");
         interview.setContactBy("contact");
@@ -189,7 +195,8 @@ class InterviewRepositoryTest {
         IntStream.range(0, 8).forEach(i -> {
             var interview = new Interview();
             interview.setMode(1);
-            interview.setSubmitterId(1);
+            var submitter = new Submitter(1, "submitter");
+            interview.setSubmitter(submitter);
             interview.setTitle(String.format("Interview_%d", i));
             interview.setAdditional(String.format("Some text_%d", i));
             interview.setContactBy("Some contact");

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.checkdev.mock.MockSrv;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.domain.Submitter;
 import ru.checkdev.mock.repository.InterviewRepository;
 
 import java.sql.Timestamp;
@@ -22,7 +23,6 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.in;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,7 +42,7 @@ class InterviewServiceTest {
             .id(1)
             .mode(2)
             .status(1)
-            .submitterId(3)
+            .submitter(new Submitter(3, "submitter"))
             .title("test_title")
             .additional("test_additional")
             .contactBy("test_contact_by")
@@ -70,7 +70,6 @@ class InterviewServiceTest {
             var interview = new Interview();
             interview.setId(i);
             interview.setMode(1);
-            interview.setSubmitterId(1);
             interview.setTitle(String.format("Interview_%d", i));
             interview.setAdditional("Some text");
             interview.setContactBy("Some contact");
@@ -153,7 +152,6 @@ class InterviewServiceTest {
         IntStream.range(0, 8).forEach(i -> {
             var interview = new Interview();
             interview.setMode(1);
-            interview.setSubmitterId(1);
             interview.setTitle(String.format("Interview_%d", i));
             interview.setAdditional(String.format("Some text_%d", i));
             interview.setContactBy("Some contact");

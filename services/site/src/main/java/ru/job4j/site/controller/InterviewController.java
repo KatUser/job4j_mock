@@ -55,7 +55,10 @@ public class InterviewController {
         var token = getToken(req);
         if (token != null) {
             var userInfo = authService.userInfo(token);
-            interviewDTO.setSubmitterId(userInfo.getId());
+            var submitter = interviewDTO.getSubmitter();
+            submitter.setId(userInfo.getId());
+//            interviewDTO.setSubmitterId(userInfo.getId());
+//            interviewDTO.setSubmitter();
         }
         interviewDTO.setTopicId(topicId);
         InterviewDTO createInterview = interviewService.create(getToken(req), interviewDTO);
@@ -113,7 +116,8 @@ public class InterviewController {
         try {
             userInfoDTO = authService.userInfo(token);
             interview = interviewService.getById(token, interviewId);
-            if (interview.getSubmitterId() != userInfoDTO.getId()) {
+            var submitter = interview.getSubmitter();
+            if (submitter.getId() != userInfoDTO.getId()) {
                 return "redirect:/interview/" + interviewId;
             }
         } catch (Exception e) {
@@ -158,7 +162,8 @@ public class InterviewController {
         var userInfoDTO = authService.userInfo(token);
         var interview = interviewService.getById(token, interviewId);
         var result = "interview/participate";
-        if (userInfoDTO != null && interview.getSubmitterId() != userInfoDTO.getId()) {
+        var submitter = interview.getSubmitter();
+        if (userInfoDTO != null && submitter.getId() != userInfoDTO.getId()) {
             var wishers = wisherService.getAllWisherDtoByInterviewId(token, String.valueOf(interview.getId()));
             var statisticMap = wisherService.getInterviewStatistic(wishers);
             model.addAttribute("interview", interview);

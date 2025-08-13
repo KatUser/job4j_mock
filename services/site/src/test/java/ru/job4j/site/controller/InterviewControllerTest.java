@@ -26,7 +26,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(classes = SiteSrv.class)
@@ -53,9 +52,11 @@ public class InterviewControllerTest {
         var token = "1410";
         var userInfo = new UserInfoDTO();
         InterviewDTO interview = new InterviewDTO();
+        var submitter = new SubmitterDTO(2, "submitter");
         interview.setId(1);
         interview.setTitle("Some interview");
         interview.setAdditional("Some description");
+        interview.setSubmitter(submitter);
         interview.setMode(4);
         interview.setTopicId(1);
         List<WisherDto> wisherDtos = new ArrayList<>();
@@ -130,6 +131,8 @@ public class InterviewControllerTest {
         interview.setApproximateDate("30.02.2024");
         interview.setCreateDate("06.10.2023");
         interview.setTopicId(1);
+        var submitter = new SubmitterDTO(1, "submitter");
+        interview.setSubmitter(submitter);
         when(authService.userInfo(token)).thenReturn(userInfo);
         when(interviewService.create(token, interview)).thenReturn(interview);
         mockMvc.perform(post("/interview/create")
@@ -142,16 +145,17 @@ public class InterviewControllerTest {
     }
 
     @Test
-    void wenGetEditViewThenReturnEditView() throws Exception {
+    void whenGetEditViewThenReturnEditView() throws Exception {
         var token = "123456";
         var userInfo = new UserInfoDTO();
         userInfo.setId(99);
         userInfo.setEmail("email");
         userInfo.setUsername("name");
         var interview = new InterviewDTO();
+        var submitter = new SubmitterDTO(userInfo.getId(), "submitter");
+        interview.setSubmitter(submitter);
         interview.setId(1);
         interview.setTitle("title");
-        interview.setSubmitterId(userInfo.getId());
         interview.setTopicId(1);
         var breadcrumbs = List.of(
                 new Breadcrumb("Главная", "/index"),
@@ -159,6 +163,7 @@ public class InterviewControllerTest {
                 new Breadcrumb(interview.getTitle(), String.format("/interview/edit/%d", interview.getId())));
         when(authService.userInfo(token)).thenReturn(userInfo);
         when(interviewService.getById(token, interview.getId())).thenReturn(interview);
+
         mockMvc.perform(get("/interview/edit/{id}", interview.getId())
                         .sessionAttr("token", token))
                 
@@ -170,7 +175,7 @@ public class InterviewControllerTest {
     }
 
     @Test
-    void wenGetEditViewUserNotCreatedInterviewThenReturnRedirectInterviews() throws Exception {
+    void whenGetEditViewUserNotCreatedInterviewThenReturnRedirectInterviews() throws Exception {
         var token = "123456";
         var userInfo = new UserInfoDTO();
         userInfo.setId(99);
@@ -178,7 +183,8 @@ public class InterviewControllerTest {
         userInfo.setUsername("name");
         var interview = new InterviewDTO();
         interview.setId(1);
-        interview.setSubmitterId(22);
+        var submitter = new SubmitterDTO(22, "submitter");
+        interview.setSubmitter(submitter);
         interview.setTopicId(1);
         when(authService.userInfo(token)).thenReturn(userInfo);
         when(interviewService.getById(token, interview.getId())).thenReturn(interview);
@@ -199,7 +205,8 @@ public class InterviewControllerTest {
         userInfo.setUsername("name");
         var interview = new InterviewDTO();
         interview.setId(1);
-        interview.setSubmitterId(userInfo.getId());
+        var submitter = new SubmitterDTO(userInfo.getId(), "submitter");
+        interview.setSubmitter(submitter);
         interview.setTopicId(1);
         when(authService.userInfo(token)).thenReturn(userInfo);
         when(interviewService.getById(token, interview.getId())).thenThrow(JsonProcessingException.class);
@@ -218,12 +225,13 @@ public class InterviewControllerTest {
         userInfo.setId(99);
         var interview = new InterviewDTO();
         interview.setId(1);
-        interview.setSubmitterId(userInfo.getId());
+        var submitter = new SubmitterDTO(userInfo.getId(), "submitter");
+        interview.setSubmitter(submitter);
         interview.setTopicId(1);
         mockMvc.perform(post("/interview/update")
                         .sessionAttr("token", token)
                         .param("id", String.valueOf(interview.getId()))
-                        .param("submitterId", String.valueOf(interview.getSubmitterId()))
+                        .param("submitterId", String.valueOf(interview.getSubmitter().getId()))
                 )
                 
                 .andExpect(status().is3xxRedirection())
@@ -237,16 +245,18 @@ public class InterviewControllerTest {
         userInfo.setId(99);
         var interview = new InterviewDTO();
         interview.setId(1);
-        interview.setSubmitterId(userInfo.getId());
+        var submitter = new SubmitterDTO(userInfo.getId(), "submitter");
+//        interview.setSubmitterId(userInfo.getId());
+        interview.setSubmitter(submitter);
         doThrow(JsonProcessingException.class).when(interviewService).update(token, interview);
         mockMvc.perform(post("/interview/update")
                         .sessionAttr("token", token)
                         .param("id", String.valueOf(interview.getId()))
-                        .param("submitterId", String.valueOf(interview.getSubmitterId()))
+                        .param("submitterId", String.valueOf(interview.getSubmitter().getId()))
                 )
                 
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/interview/edit/" + interview.getId()));
+                .andExpect(view().name("redirect:/interview/" + interview.getId()));
     }
 
     @Test
@@ -258,7 +268,8 @@ public class InterviewControllerTest {
         var interviewId = 7;
         var interview = new InterviewDTO();
         interview.setId(interviewId);
-        interview.setSubmitterId(14375842);
+        var submitter = new SubmitterDTO(14375842, "submitter");
+        interview.setSubmitter(submitter);
         interview.setTitle("Some title");
         var wishers = IntStream.range(1, 3).mapToObj(i -> {
                     var wisher = new WisherDto();
@@ -294,6 +305,7 @@ public class InterviewControllerTest {
 
     @Test
     void whenTryToParticipateWithSubmitterThenRedirectToInterviewPage() throws Exception {
+//        var interviewMock = Mockito.mock(Interview.class);
         var token = "123456";
         var userInfo = new UserInfoDTO();
         var userId = 99;
@@ -301,8 +313,10 @@ public class InterviewControllerTest {
         var interviewId = 7;
         var interview = new InterviewDTO();
         interview.setId(interviewId);
-        interview.setSubmitterId(userInfo.getId());
+        var submitter = new SubmitterDTO(userInfo.getId(), "submitter");
+        interview.setSubmitter(submitter);
         when(interviewService.getById(token, interviewId)).thenReturn(interview);
+//        when(interview.getSubmitter()).thenReturn(submitter);
         mockMvc.perform(get(String.format("/interview/%d/participate", interviewId))
                 )
                 .andExpectAll(status().is3xxRedirection(),

@@ -35,6 +35,7 @@ public class InterviewsController {
     private final FilterService filterService;
     private final WisherService wisherService;
 
+
     public InterviewsController(InterviewsService interviewsService, ProfilesService profilesService,
                                 CategoriesService categoriesService, TopicsService topicsService,
                                 AuthService authService, FilterService filterService,
@@ -77,7 +78,7 @@ public class InterviewsController {
                 interviewsPage = interviewsService.getAll(token, page, size);
             }
             Set<ProfileDTO> userList = interviewsPage.toList().stream()
-                    .map(x -> profilesService.getProfileById(x.getSubmitterId()))
+                    .map(x -> profilesService.getProfileById(x.getSubmitter().getId()))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .collect(Collectors.toSet());

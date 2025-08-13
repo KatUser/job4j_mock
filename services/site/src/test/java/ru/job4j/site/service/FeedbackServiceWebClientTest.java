@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 import ru.job4j.site.domain.StatusInterview;
 import ru.job4j.site.dto.FeedbackDTO;
 import ru.job4j.site.dto.InterviewDTO;
+import ru.job4j.site.dto.SubmitterDTO;
 
 import java.util.List;
 
@@ -70,10 +71,11 @@ class FeedbackServiceWebClientTest {
     @Test
     void whenSaveThenReturnTrue() throws JsonProcessingException {
         var interviewDto = new InterviewDTO();
+        var submitterDto = new SubmitterDTO(1, "submitter1");
         interviewDto.setId(1);
-        interviewDto.setSubmitterId(1);
+        interviewDto.setSubmitter(submitterDto);
         interviewDto.setMode(1);
-        var feedbackDto1 = new FeedbackDTO(1, interviewDto.getId(), interviewDto.getSubmitterId(), 0, "text", 5);
+        var feedbackDto1 = new FeedbackDTO(1, interviewDto.getId(), interviewDto.getSubmitter().getId(), 0, "text", 5);
         var token = "1234";
         when(webClientMock.get()).thenReturn(requestHeadersUriMock);
         when(requestHeadersUriMock
@@ -100,10 +102,11 @@ class FeedbackServiceWebClientTest {
     @Test
     void whenSaveFeedbackThenReturnFalse() throws JsonProcessingException {
         var interviewDto = new InterviewDTO();
+        var submitterDto = new SubmitterDTO(1, "submitter1");
         interviewDto.setId(1);
-        interviewDto.setSubmitterId(1);
+        interviewDto.setSubmitter(submitterDto);
         interviewDto.setMode(1);
-        var feedbackDto1 = new FeedbackDTO(1, interviewDto.getId(), interviewDto.getSubmitterId(), 0, "text", 5);
+        var feedbackDto1 = new FeedbackDTO(1, interviewDto.getId(), interviewDto.getSubmitter().getId(), 0, "text", 5);
         var token = "1234";
         when(webClientMock.post()).thenReturn(requestBodyUriMock);
         when(requestBodyUriMock.uri(urlFeedback)).thenReturn(requestBodyMock);
@@ -179,19 +182,22 @@ class FeedbackServiceWebClientTest {
 
     @Test
     void whenGerRoleInInterviewThenReturnInterviewMode() {
-        var interview = new InterviewDTO();
-        interview.setSubmitterId(1);
-        interview.setMode(1);
-        var userId = interview.getSubmitterId();
-        var expected = interview.getMode();
-        var actual = feedbackService.gerRoleInInterview(userId, interview);
+        var interviewDTO = new InterviewDTO();
+        var submitterDto = new SubmitterDTO(1, "submitter1");
+        interviewDTO.setId(1);
+        interviewDTO.setSubmitter(submitterDto);
+        interviewDTO.setMode(1);
+        var userId = interviewDTO.getSubmitter().getId();
+        var expected = interviewDTO.getMode();
+        var actual = feedbackService.gerRoleInInterview(userId, interviewDTO);
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void whenGerRoleInInterviewThenReturnRoleTwo() {
         var interview = new InterviewDTO();
-        interview.setSubmitterId(1);
+        var submitterDto = new SubmitterDTO(1, "submitter1");
+        interview.setSubmitter(submitterDto);
         interview.setMode(1);
         var userId = 2;
         var expected = 2;
@@ -202,7 +208,8 @@ class FeedbackServiceWebClientTest {
     @Test
     void whenGerRoleInInterviewThenReturnRoleOne() {
         var interview = new InterviewDTO();
-        interview.setSubmitterId(1);
+        var submitterDto = new SubmitterDTO(1, "submitter1");
+        interview.setSubmitter(submitterDto);
         interview.setMode(2);
         var userId = 2;
         var expected = 1;
@@ -215,7 +222,8 @@ class FeedbackServiceWebClientTest {
         var token = "1234";
         var interviewDto = new InterviewDTO();
         interviewDto.setId(1);
-        interviewDto.setSubmitterId(1);
+        var submitterDto = new SubmitterDTO(1, "submitter1");
+        interviewDto.setSubmitter(submitterDto);
         interviewDto.setStatus(StatusInterview.IN_PROGRESS.getId());
         var feedbackDto1 = new FeedbackDTO(1, 1, 1, 1, "text", 5);
         doNothing().when(interviewService)
@@ -238,7 +246,8 @@ class FeedbackServiceWebClientTest {
         var token = "1234";
         var interviewDto = new InterviewDTO();
         interviewDto.setId(1);
-        interviewDto.setSubmitterId(1);
+        var submitterDto = new SubmitterDTO(1, "submitter1");
+        interviewDto.setSubmitter(submitterDto);
         interviewDto.setStatus(StatusInterview.IS_NEW.getId());
         var feedbackDto1 = new FeedbackDTO(1, 1, 1, 1, "text", 5);
         doNothing().when(interviewService)
@@ -261,7 +270,8 @@ class FeedbackServiceWebClientTest {
         var token = "1234";
         var interviewDto = new InterviewDTO();
         interviewDto.setId(1);
-        interviewDto.setSubmitterId(1);
+        var submitterDto = new SubmitterDTO(1, "submitter1");
+        interviewDto.setSubmitter(submitterDto);
         interviewDto.setStatus(StatusInterview.IS_FEEDBACK.getId());
         var feedbackDto1 = new FeedbackDTO(1, 1, 1, 1, "text", 5);
         doNothing().when(interviewService)
@@ -284,7 +294,8 @@ class FeedbackServiceWebClientTest {
         var token = "1234";
         var interviewDto = new InterviewDTO();
         interviewDto.setId(1);
-        interviewDto.setSubmitterId(1);
+        var submitterDto = new SubmitterDTO(1, "submitter1");
+        interviewDto.setSubmitter(submitterDto);
         interviewDto.setStatus(StatusInterview.IS_FEEDBACK.getId());
         var feedbackDto1 = new FeedbackDTO(1, 1, 1, 1, "text", 5);
         var feedbackDto2 = new FeedbackDTO(2, 1, 1, 2, "text2", 5);
@@ -307,7 +318,8 @@ class FeedbackServiceWebClientTest {
         var token = "1234";
         var interviewDto = new InterviewDTO();
         interviewDto.setId(1);
-        interviewDto.setSubmitterId(1);
+        var submitterDto = new SubmitterDTO(1, "submitter1");
+        interviewDto.setSubmitter(submitterDto);
         interviewDto.setStatus(StatusInterview.IS_FEEDBACK.getId());
         var feedbackDto1 = new FeedbackDTO(1, 1, 1, 1, "text", 5);
         var feedbacks = List.of(feedbackDto1);

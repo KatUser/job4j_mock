@@ -15,7 +15,7 @@ public class InterviewDTO {
 
     private int status;
 
-    private int submitterId;
+    private SubmitterDTO submitter;
 
     private String title;
 

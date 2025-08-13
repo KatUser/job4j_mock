@@ -31,7 +31,8 @@ class InterviewServiceTest {
         var user = new UserInfoDTO();
         user.setId(1);
         var interview = new InterviewDTO();
-        interview.setSubmitterId(user.getId());
+        var submitter = new SubmitterDTO(user.getId(), "submitter");
+        interview.setSubmitter(submitter);
         var actual = interviewService.isAuthor(user, interview);
         assertThat(actual).isTrue();
     }
@@ -41,7 +42,8 @@ class InterviewServiceTest {
         var user = new UserInfoDTO();
         user.setId(1);
         var interview = new InterviewDTO();
-        interview.setSubmitterId(55);
+        var submitter = new SubmitterDTO(55, "submitter");
+        interview.setSubmitter(submitter);
         var actual = interviewService.isAuthor(user, interview);
         assertThat(actual).isFalse();
     }

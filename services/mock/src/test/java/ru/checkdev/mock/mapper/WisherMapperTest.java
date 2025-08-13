@@ -2,6 +2,7 @@ package ru.checkdev.mock.mapper;
 
 import org.junit.Test;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.domain.Submitter;
 import ru.checkdev.mock.domain.Wisher;
 import ru.checkdev.mock.dto.WisherDto;
 
@@ -14,7 +15,7 @@ public class WisherMapperTest {
 
     @Test
     public void whenWisherCreated() {
-        var interview = new Interview(1, 1, 1, 1,
+        var interview = new Interview(1, 1, 1, new Submitter(2, "test name"),
                 "title", "additional",
                 "contact", "30.02.2070",
                 new Timestamp(System.currentTimeMillis()), 1);

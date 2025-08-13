@@ -14,13 +14,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.checkdev.mock.MockSrv;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.domain.Submitter;
 import ru.checkdev.mock.domain.Wisher;
 import ru.checkdev.mock.service.InterviewService;
 import ru.checkdev.mock.service.WisherService;
 
 import java.util.Optional;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -42,7 +43,7 @@ class WisherControllerTest {
     private Interview interview = Interview.of()
             .id(1)
             .mode(2)
-            .submitterId(3)
+            .submitter(new Submitter(3, "name"))
             .title("test_title")
             .additional("test_additional")
             .contactBy("test_contact_by")

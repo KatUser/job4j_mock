@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.site.domain.Breadcrumb;
 import ru.job4j.site.dto.FeedbackDTO;
 import ru.job4j.site.dto.InterviewDTO;
+import ru.job4j.site.dto.SubmitterDTO;
 import ru.job4j.site.service.FeedbackService;
 import ru.job4j.site.service.InterviewService;
 
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -46,7 +47,7 @@ class FeedbackControllerTest {
 
     @Test
     void whenGetFeedbackFormThenReturnFeedbackPage() throws Exception {
-        var interviewDTO = new InterviewDTO(1, 1, 2, 2,
+        var interviewDTO = new InterviewDTO(1, 1, 2, new SubmitterDTO(1, "John Doe"),
                 "title", "additional", "contactBy",
                 null, null, 0);
         var token = "1234";

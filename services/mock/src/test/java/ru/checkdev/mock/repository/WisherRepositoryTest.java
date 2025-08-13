@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.domain.Submitter;
 import ru.checkdev.mock.domain.Wisher;
 import ru.checkdev.mock.dto.WisherDto;
 
@@ -34,7 +35,8 @@ class WisherRepositoryTest {
     public void clearTable() {
         interview = new Interview();
         interview.setMode(1);
-        interview.setSubmitterId(1);
+        var submitter = new Submitter(1, "submitter");
+        interview.setSubmitter(submitter);
         interview.setTitle("title");
         interview.setAdditional("additional");
         interview.setContactBy("mail@mail");

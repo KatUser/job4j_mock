@@ -129,7 +129,8 @@ public class FeedbackServiceWebClient implements FeedbackService {
      */
     public int gerRoleInInterview(int userId, InterviewDTO interviewDTO) {
         var roleInInterview = interviewDTO.getMode();
-        if (userId != interviewDTO.getSubmitterId()) {
+//        if (userId != interviewDTO.getSubmitterId()) {
+            if (userId != interviewDTO.getSubmitter().getId()) {
             roleInInterview = interviewDTO.getMode() == 1 ? 2 : 1;
         }
         return roleInInterview;
