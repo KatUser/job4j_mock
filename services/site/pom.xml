@@ -82,17 +82,17 @@
             <artifactId>summernote</artifactId>
             <version>0.8.10</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.22.0</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.webjars/font-awesome -->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
             <version>6.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>ru.checkdev</groupId>
-            <artifactId>mock</artifactId>
-            <version>1.0.0</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

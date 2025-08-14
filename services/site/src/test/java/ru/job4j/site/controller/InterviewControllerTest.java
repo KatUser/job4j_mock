@@ -2,10 +2,12 @@ package ru.job4j.site.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
 import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.site.SiteSrv;
 import ru.job4j.site.domain.Breadcrumb;
@@ -22,8 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -69,7 +70,7 @@ public class InterviewControllerTest {
         when(wisherService.isWisher(userInfo.getId(), interview.getId(), wisherDtos)).thenReturn(false);
         mockMvc.perform(get("/interview/{id}", interview.getId())
                         .sessionAttr("token", token))
-                
+
                 .andExpect(model().attribute("interview", interview))
                 .andExpect(model().attribute("breadcrumbs", breadcrumbs))
                 .andExpect(model().attribute("userInfo", userInfo))
@@ -107,7 +108,7 @@ public class InterviewControllerTest {
         mockMvc.perform(get("/interview/createForm")
                         .sessionAttr("token", token)
                         .param("topicId", "1"))
-                
+
                 .andExpect(model().attribute("category", topic.getCategory()))
                 .andExpect(model().attribute("topic", topic))
                 .andExpect(model().attribute("breadcrumbs", breadcrumbs))
@@ -139,7 +140,7 @@ public class InterviewControllerTest {
                         .flashAttr("interviewDTO", interview)
                         .sessionAttr("token", token)
                         .param("topicId", "1"))
-                
+
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/interview/" + interview.getId()));
     }
@@ -166,7 +167,7 @@ public class InterviewControllerTest {
 
         mockMvc.perform(get("/interview/edit/{id}", interview.getId())
                         .sessionAttr("token", token))
-                
+
                 .andExpect(model().attribute("userInfo", userInfo))
                 .andExpect(model().attribute("interview", interview))
                 .andExpect(model().attribute("breadcrumbs", breadcrumbs))
@@ -190,7 +191,7 @@ public class InterviewControllerTest {
         when(interviewService.getById(token, interview.getId())).thenReturn(interview);
         mockMvc.perform(get("/interview/edit/{id}", interview.getId())
                         .sessionAttr("token", token))
-                
+
                 .andExpect(model().attribute("userInfo", userInfo))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/interview/" + interview.getId()));
@@ -212,7 +213,7 @@ public class InterviewControllerTest {
         when(interviewService.getById(token, interview.getId())).thenThrow(JsonProcessingException.class);
         mockMvc.perform(get("/interview/edit/{id}", interview.getId())
                         .sessionAttr("token", token))
-                
+
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/interviews/"));
     }
@@ -233,7 +234,7 @@ public class InterviewControllerTest {
                         .param("id", String.valueOf(interview.getId()))
                         .param("submitterId", String.valueOf(interview.getSubmitter().getId()))
                 )
-                
+
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/interview/" + interview.getId()));
     }
@@ -254,7 +255,7 @@ public class InterviewControllerTest {
                         .param("id", String.valueOf(interview.getId()))
                         .param("submitterId", String.valueOf(interview.getSubmitter().getId()))
                 )
-                
+
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/interview/" + interview.getId()));
     }
@@ -272,15 +273,15 @@ public class InterviewControllerTest {
         interview.setSubmitter(submitter);
         interview.setTitle("Some title");
         var wishers = IntStream.range(1, 3).mapToObj(i -> {
-                    var wisher = new WisherDto();
-                    wisher.setId(i);
-                    wisher.setInterviewId(interviewId);
-                    wisher.setUserId(userId + i);
-                    wisher.setContactBy(String.format("user_%d@mail.cd", i));
-                    wisher.setApprove(i % 2 == 0);
-                    wisher.setStatus(1);
-                    return wisher;
-                }).toList();
+            var wisher = new WisherDto();
+            wisher.setId(i);
+            wisher.setInterviewId(interviewId);
+            wisher.setUserId(userId + i);
+            wisher.setContactBy(String.format("user_%d@mail.cd", i));
+            wisher.setApprove(i % 2 == 0);
+            wisher.setStatus(1);
+            return wisher;
+        }).toList();
         var interviewStatistics = new HashMap<Integer, InterviewStatistic>();
         IntStream.range(1, 3).forEach(i ->
                 interviewStatistics.put(i, new InterviewStatistic(i + 1, i, i - 1)));
@@ -305,21 +306,23 @@ public class InterviewControllerTest {
 
     @Test
     void whenTryToParticipateWithSubmitterThenRedirectToInterviewPage() throws Exception {
-//        var interviewMock = Mockito.mock(Interview.class);
+
         var token = "123456";
         var userInfo = new UserInfoDTO();
         var userId = 99;
         userInfo.setId(userId);
         var interviewId = 7;
         var interview = new InterviewDTO();
-        interview.setId(interviewId);
-        var submitter = new SubmitterDTO(userInfo.getId(), "submitter");
-        interview.setSubmitter(submitter);
-        when(interviewService.getById(token, interviewId)).thenReturn(interview);
-//        when(interview.getSubmitter()).thenReturn(submitter);
-        mockMvc.perform(get(String.format("/interview/%d/participate", interviewId))
-                )
-                .andExpectAll(status().is3xxRedirection(),
-                        view().name(String.format("redirect:/interview/%d", interviewId)));
+
+            interview.setId(interviewId);
+            var submitter = new SubmitterDTO(userInfo.getId(), "submitter");
+            interview.setSubmitter(submitter);
+
+            when(interviewService.getById(token, interviewId)).thenReturn(interview);
+
+            mockMvc.perform(get(String.format("/interview/%d/participate", interviewId))
+                    .sessionAttr("token", token))
+                    .andExpectAll(status().is3xxRedirection(),
+                            view().name(String.format("redirect:/interview/%d", interviewId)));
+        }
     }
-}
