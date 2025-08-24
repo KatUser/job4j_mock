@@ -14,6 +14,10 @@ import java.util.List;
 public class CategoriesService {
     private final TopicsService topicsService;
 
+    private final InterviewsService interviewsService;
+
+    private final static int NEW_STATUS = 1;
+
     public List<CategoryDTO> getAll() throws JsonProcessingException {
         var text = new RestAuthCall("http://localhost:9902/categories/").get();
         var mapper = new ObjectMapper();
@@ -63,6 +67,16 @@ public class CategoriesService {
         var categoriesDTO = getPopularFromDesc();
         for (var categoryDTO : categoriesDTO) {
             categoryDTO.setTopicsSize(topicsService.getByCategory(categoryDTO.getId()).size());
+            var topicByCategory = topicsService.getByCategory(categoryDTO.getId());
+
+            var allNewInterviews = 0;
+            for (var topic : topicByCategory) {
+                allNewInterviews
+                        += interviewsService.getByTopicIdAndStatus(
+                        topic.getId(), NEW_STATUS, 0, 0).getNumberOfElements();
+            }
+            categoryDTO.setInterviews(allNewInterviews);
+
         }
         return categoriesDTO;
     }

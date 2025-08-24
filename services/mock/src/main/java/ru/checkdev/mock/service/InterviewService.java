@@ -69,6 +69,10 @@ public class InterviewService {
         return interviewRepository.findByTopicId(topicId, PageRequest.of(page, size));
     }
 
+    public Page<Interview> findByTopicIdAndStatus(int topicId, int status, int page, int size) {
+        return interviewRepository.findByTopicIdAndStatus(topicId, status, PageRequest.of(page, size));
+    }
+
     public Page<Interview> findByTopicsIds(List<Integer> topicsIds, int page, int size) {
         return interviewRepository.findByTopicIdIn(topicsIds, PageRequest.of(page, size));
     }
