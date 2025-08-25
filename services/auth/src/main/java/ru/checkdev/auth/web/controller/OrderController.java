@@ -39,4 +39,14 @@ public class OrderController {
     public List<Order> get(@RequestParam(required = false) String type) {
         return this.orders.findByType(type);
     }
+
+    @GetMapping("/{orderId}")
+    public Order getOrderById(@PathVariable int orderId) {
+        return this.orders.getOrderById(orderId);
+    }
+
+    @DeleteMapping("/{orderId}")
+    public void delete(@PathVariable int orderId) {
+        this.orders.deleteOrderById(orderId);
+    }
 }

@@ -32,7 +32,7 @@ public class SecurityConfig {
                 "/person/by",
                 "/person/random",
                 "/person/resume/**",
-                "/order/save",
+                "/order/**",
                 "/person/by/email",
                 "/img",
                 "/person/profile",
@@ -40,7 +40,8 @@ public class SecurityConfig {
                 "/template/ping",
                 "/profiles/**",
                 "/swagger-ui/**",
-                "/v3/**"
+                "/v3/**",
+                "/error/**"
         );
     }
 

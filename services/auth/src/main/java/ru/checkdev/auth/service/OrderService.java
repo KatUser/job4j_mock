@@ -58,4 +58,12 @@ public class OrderService {
             return this.orders.findAllByOrderByCreatedDesc();
         }
     }
+
+    public Order getOrderById(int id) {
+        return this.orders.findById(id).get();
+    }
+
+    public void deleteOrderById(int id) {
+        this.orders.deleteById(id);
+    }
 }
