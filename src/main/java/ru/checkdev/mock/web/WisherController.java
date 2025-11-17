@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.checkdev.mock.domain.Interview;
 import ru.checkdev.mock.domain.Wisher;
 import ru.checkdev.mock.dto.WisherDto;
+import ru.checkdev.mock.exception.ItemNotFoundException;
 import ru.checkdev.mock.mapper.WisherMapper;
 import ru.checkdev.mock.service.InterviewService;
 import ru.checkdev.mock.service.WisherService;
@@ -41,14 +42,9 @@ public class WisherController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public ResponseEntity<Wisher> getById(@Valid @PathVariable int id) throws SQLException {
-        Optional<Wisher> rsl = wisherService.findById(id);
-        if (rsl.isEmpty()) {
-            throw new SQLException("There is no wisher with this number");
-        }
-        return  rsl
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<Wisher> getById(@Valid @PathVariable int id) {
+        return wisherService.findById(id).map(ResponseEntity::ok)
+                .orElseThrow(() -> new ItemNotFoundException("Item not found"));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR')")
@@ -67,7 +63,7 @@ public class WisherController {
         rsl.setUserId(wisherDto.getUserId());
         rsl.setContactBy(wisherDto.getContactBy());
         rsl.setApprove(wisherDto.isApprove());
-        return new ResponseEntity<Wisher>(rsl,
+        return new ResponseEntity<>(rsl,
                 wisherService.update(rsl) ? HttpStatus.OK : HttpStatus.NO_CONTENT);
     }
 
@@ -76,7 +72,7 @@ public class WisherController {
     public ResponseEntity<Wisher> delete(@Valid @PathVariable int id) {
         Wisher wisher = new Wisher();
         wisher.setId(id);
-        return new ResponseEntity<Wisher>(wisher,
+        return new ResponseEntity<>(wisher,
                 wisherService.delete(wisher) ? HttpStatus.OK : HttpStatus.NO_CONTENT);
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.exception.ItemNotFoundException;
 import ru.checkdev.mock.service.InterviewService;
 
 import java.sql.SQLException;
@@ -25,8 +26,7 @@ public class InterviewsController {
     @GetMapping("/")
     public ResponseEntity<Page<Interview>> findAll(
             @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "20") int size
-    ) throws SQLException {
+            @RequestParam(required = false, defaultValue = "20") int size) throws SQLException {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(interviewService.findPaging(page, size));
@@ -34,9 +34,14 @@ public class InterviewsController {
 
     @GetMapping("/{mode}")
     public ResponseEntity<List<Interview>> findByMode(@PathVariable int mode) {
+        var result = interviewService.findByMode(mode);
+        if (result.isEmpty()) {
+            throw new ItemNotFoundException("No item found for mode " + mode);
+        }
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(interviewService.findByMode(mode));
+
     }
 
     @GetMapping("/findByTopicId/{topicId}")
@@ -44,6 +49,11 @@ public class InterviewsController {
             @PathVariable int topicId,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "20") int size) {
+
+        var result = interviewService.findByTopicId(topicId, page, size);
+        if (result.isEmpty()) {
+            throw new ItemNotFoundException("No item found for topic id " + topicId);
+        }
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(interviewService.findByTopicId(topicId, page, size));

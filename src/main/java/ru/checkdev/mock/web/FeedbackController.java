@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.checkdev.mock.dto.FeedbackDTO;
+import ru.checkdev.mock.exception.ItemNotFoundException;
 import ru.checkdev.mock.service.FeedbackService;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class FeedbackController {
     @PostMapping("/")
     public ResponseEntity<FeedbackDTO> saveNewFeedback(@RequestBody FeedbackDTO feedbackDTO) {
         var result = service.save(feedbackDTO);
+
         return new ResponseEntity<>(
                 result.orElse(new FeedbackDTO()),
                 result.isPresent() ? HttpStatus.CREATED : HttpStatus.NOT_FOUND);
@@ -34,6 +36,9 @@ public class FeedbackController {
     @GetMapping("/{id}")
     public ResponseEntity<List<FeedbackDTO>> findAllByInterviewId(@PathVariable("id") int interviewId) {
         var result = service.findByInterviewId(interviewId);
+        if (result.isEmpty()) {
+            throw new ItemNotFoundException("No such interview");
+        }
         return ResponseEntity.ok(result);
     }
 
@@ -48,8 +53,9 @@ public class FeedbackController {
     public ResponseEntity<List<FeedbackDTO>> findByInterviewIdUserId(@RequestParam("iId") int interviewId,
                                                                      @RequestParam("uId") int userId) {
         var result = service.findByInterviewIdAndUserId(interviewId, userId);
-        return new ResponseEntity<>(
-                result,
-                result.isEmpty() ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+        if (result.isEmpty()) {
+            throw new ItemNotFoundException("No such interview or user");
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

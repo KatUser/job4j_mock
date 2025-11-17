@@ -36,7 +36,7 @@ class InterviewControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private InterviewService service;
+    private InterviewService interviewService;
 
     private Interview interview = Interview.of()
             .id(1)
@@ -67,7 +67,7 @@ class InterviewControllerTest {
     @Test
     @WithMockUser
     public void whenSaveAndGetTheSame() throws Exception {
-        when(service.save(any(Interview.class))).thenReturn(Optional.of(interview));
+        when(interviewService.save(any(Interview.class))).thenReturn(Optional.of(interview));
         mockMvc.perform(post("/interview/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(interview)))
@@ -80,7 +80,7 @@ class InterviewControllerTest {
     @Test
     @WithMockUser
     public void whenGetByIdIsCorrect() throws Exception {
-        when(service.findById(any(Integer.class))).thenReturn(Optional.of(interview));
+        when(interviewService.findById(any(Integer.class))).thenReturn(Optional.of(interview));
         this.mockMvc.perform(get("/interview/1"))
                 
                 .andExpectAll(
@@ -92,7 +92,7 @@ class InterviewControllerTest {
     @Test
     @WithMockUser
     public void whenGetByIdIsEmpty() throws Exception {
-        when(service.findById(any(Integer.class))).thenReturn(Optional.empty());
+        when(interviewService.findById(any(Integer.class))).thenReturn(Optional.empty());
         this.mockMvc.perform(get("/interview/1"))
                 
                 .andExpectAll(
@@ -103,7 +103,7 @@ class InterviewControllerTest {
     @Test
     @WithMockUser(roles = {"ADMIN", "MODERATOR"})
     public void whenTryToUpdateIsCorrect() throws Exception {
-        when(service.update(any(Interview.class))).thenReturn(true);
+        when(interviewService.update(any(Interview.class))).thenReturn(true);
         this.mockMvc.perform(put("/interview/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(interview)))
@@ -117,7 +117,7 @@ class InterviewControllerTest {
     @Test
     @WithMockUser(roles = {"ADMIN", "MODERATOR"})
     public void whenTryToUpdateIsNotCorrect() throws Exception {
-        when(service.update(any(Interview.class))).thenReturn(false);
+        when(interviewService.update(any(Interview.class))).thenReturn(false);
         this.mockMvc.perform(put("/interview/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(interview)))
@@ -131,9 +131,9 @@ class InterviewControllerTest {
     @Test
     @WithMockUser(roles = {"ADMIN", "MODERATOR"})
     public void whenDeleteIsCorrect() throws Exception {
-        when(service.delete(any(Interview.class))).thenReturn(true);
+        when(interviewService.findById(any(Integer.class))).thenReturn(Optional.of(interview));
+        when(interviewService.delete(any(Interview.class))).thenReturn(true);
         this.mockMvc.perform(delete("/interview/1"))
-                
                 .andExpectAll(
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
@@ -143,33 +143,33 @@ class InterviewControllerTest {
     @Test
     @WithMockUser(roles = {"ADMIN", "MODERATOR"})
     public void whenDeleteIsNotCorrect() throws Exception {
-        when(service.delete(any(Interview.class))).thenReturn(false);
+        when(interviewService.delete(any(Interview.class))).thenReturn(false);
         this.mockMvc.perform(delete("/interview/1"))
-                
                 .andExpectAll(
-                        status().isNoContent(),
+                        status().is4xxClientError(),
                         content().contentType(MediaType.APPLICATION_JSON),
-                        content().string(emptyString));
+                        content().string("{\"message\":\"Item not found\"}"));
     }
 
     @Test
     @WithMockUser
     public void whenUpdateStatusThenReturnStatusOk() throws Exception {
-        when(service.updateStatus(anyInt(), anyInt())).thenReturn(true);
+        when(interviewService.findStatusById(anyInt())).thenReturn(Optional.of(2));
+        when(interviewService.findById(anyInt())).thenReturn(Optional.of(interview));
+        when(interviewService.updateStatus(anyInt(), anyInt())).thenReturn(true);
         this.mockMvc.perform(put("/interview/status/")
-                        .param("id", "1")
-                        .param("newStatus", "2"))
-                
+                        .param("interviewId", "1")
+                        .param("interviewNewStatus", "2"))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void whenUpdateStatusThenReturnStatusNotFound() throws Exception {
-        when(service.updateStatus(anyInt(), anyInt())).thenReturn(false);
+        when(interviewService.updateStatus(anyInt(), anyInt())).thenReturn(false);
         this.mockMvc.perform(put("/interview/status/")
                         .param("id", "1")
                         .param("newStatus", "2"))
                 
-                .andExpect(status().is4xxClientError());
+                .andExpectAll(status().is4xxClientError());
     }
 }

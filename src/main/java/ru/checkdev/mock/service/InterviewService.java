@@ -102,4 +102,8 @@ public class InterviewService {
             return false;
         }
     }
+
+    public Optional<Integer> findStatusById(int id) {
+        return interviewRepository.findStatusById(id);
+    }
 }

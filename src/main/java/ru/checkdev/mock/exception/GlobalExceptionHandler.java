@@ -1,4 +1,4 @@
-package ru.checkdev.mock.web;
+package ru.checkdev.mock.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
+import ru.checkdev.mock.error.message.ErrorMessage;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,5 +76,13 @@ public class GlobalExceptionHandler {
             put("request URI", request.getRequestURI());
         }}));
         LOGGER.error(e.getMessage());
+    }
+
+
+    @ExceptionHandler(value = ItemNotFoundException.class)
+    public ResponseEntity<ErrorMessage> notFoundException(ItemNotFoundException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ErrorMessage(exception.getMessage()));
     }
 }

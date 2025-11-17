@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.exception.ItemNotFoundException;
 import ru.checkdev.mock.service.InterviewService;
 
 import javax.validation.Valid;
@@ -32,30 +33,40 @@ public class InterviewController {
     public ResponseEntity<Interview> getById(@Valid @PathVariable int id) {
         return interviewService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ItemNotFoundException("Item not found"));
     }
 
 
     @PutMapping("/")
     public ResponseEntity<Interview> update(@Valid @RequestBody Interview interview) {
-        return new ResponseEntity<Interview>(interview,
+        return new ResponseEntity<>(interview,
                 interviewService.update(interview) ? HttpStatus.OK : HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/status/")
-    public ResponseEntity<HttpStatus> updateStatusInterview(@RequestParam String id, @RequestParam String newStatus) {
-        var idInterview = Integer.parseInt(id);
-        var status = Integer.parseInt(newStatus);
-        var result = interviewService.updateStatus(idInterview, status);
+    public ResponseEntity<HttpStatus> updateStatusInterview(@RequestParam String interviewId,
+                                                            @RequestParam String interviewNewStatus) {
+        var id = Integer.parseInt(interviewId);
+        var statusId = Integer.parseInt(interviewNewStatus);
+
+        if (interviewService.findById(id).isEmpty()
+                || interviewService.findStatusById(statusId).isEmpty()) {
+            throw new ItemNotFoundException("Item not found");
+        }
+
+        var result = interviewService.updateStatus(id, statusId);
         return ResponseEntity.status(result ? HttpStatus.OK : HttpStatus.NOT_FOUND).build();
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Interview> delete(@Valid @PathVariable int id) {
+        if (interviewService.findById(id).isEmpty()) {
+            throw new ItemNotFoundException("Item not found");
+        }
         Interview interview = new Interview();
         interview.setId(id);
-        return new ResponseEntity<Interview>(interview,
+        return new ResponseEntity<>(interview,
                 interviewService.delete(interview) ? HttpStatus.OK : HttpStatus.NO_CONTENT);
     }
 }

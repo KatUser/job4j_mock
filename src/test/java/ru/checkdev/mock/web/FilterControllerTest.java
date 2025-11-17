@@ -19,7 +19,6 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,24 +60,21 @@ public class FilterControllerTest {
     }
 
     @Test
-    public void whenFilterNotFindByUserId() throws Exception {
-        var filter = new Filter();
+    public void whenFilterNotFoundByUserId() throws Exception {
         when(filterService.findByUserId(1)).thenReturn(Optional.empty());
-        String json = new GsonBuilder().serializeNulls().create().toJson(filter);
         mockMvc.perform(get("/filter/1"))
-                
                 .andExpectAll(
-                        status().isNotFound(),
                         content().contentType(MediaType.APPLICATION_JSON),
-                        content().string(json));
+                        content().string("{\"message\":\"No such user found\"}"));
     }
 
     @Test
     public void whenFilterDeleted() throws Exception {
         var filter = new Filter(1, 1, 1);
+        when(filterService.findByUserId(1)).thenReturn(Optional.of(filter));
+        when(filterService.deleteByUserId(1)).thenReturn(1);
         when(filterService.deleteByUserId(1)).thenReturn(1);
         mockMvc.perform(delete("/filter/delete/1"))
-                
                 .andExpectAll(status().isOk(),
                         content().string("true"));
     }
@@ -87,8 +83,7 @@ public class FilterControllerTest {
     public void whenFilterCanNotBeDeleted() throws Exception {
         when(filterService.deleteByUserId(1)).thenReturn(0);
         mockMvc.perform(delete("/filter/delete/1"))
-                
                 .andExpectAll(status().isNotFound(),
-                        content().string("false"));
+                        content().string("{\"message\":\"No such user found\"}"));
     }
 }

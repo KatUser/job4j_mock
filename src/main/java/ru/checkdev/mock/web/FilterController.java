@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.checkdev.mock.domain.Filter;
+import ru.checkdev.mock.exception.ItemNotFoundException;
 import ru.checkdev.mock.service.FilterService;
 
 import java.sql.SQLException;
@@ -30,16 +31,17 @@ public class FilterController {
     public ResponseEntity<Filter> getByUserId(@PathVariable int userId) {
         return filterService.findByUserId(userId).map(
                 value -> new ResponseEntity<>(value, HttpStatus.OK)
-        ).orElseGet(() -> new ResponseEntity<>(new Filter(), HttpStatus.NOT_FOUND));
+        ).orElseThrow(() -> new ItemNotFoundException("No such user found"));
     }
 
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<Boolean> deleteByUserId(@PathVariable int userId) {
-        int result = filterService.deleteByUserId(userId);
-        if (result > 0) {
+        var result = filterService.findByUserId(userId);
+        if (result.isPresent()) {
+            filterService.deleteByUserId(userId);
             return new ResponseEntity<>(true, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+            throw new ItemNotFoundException("No such user found");
         }
     }
 }

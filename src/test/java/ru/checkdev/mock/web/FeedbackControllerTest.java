@@ -25,7 +25,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -99,8 +98,7 @@ class FeedbackControllerTest {
         when(service.findByInterviewId(anyInt())).thenReturn(Collections.emptyList());
         mockMvc.perform(get("/feedback/" + anyInt()))
                 
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", Matchers.is(0)));
+                .andExpect(status().is4xxClientError());
     }
 
     @Test

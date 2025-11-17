@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.checkdev.mock.domain.Interview;
 import ru.checkdev.mock.domain.Wisher;
 import ru.checkdev.mock.dto.WisherDto;
+import ru.checkdev.mock.exception.ItemNotFoundException;
 import ru.checkdev.mock.service.InterviewService;
 import ru.checkdev.mock.service.WisherService;
 
 import javax.validation.Valid;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,10 +34,10 @@ public class WishersController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<Wisher>> findByInterview(@Valid @PathVariable int id) throws SQLException {
+    public ResponseEntity<List<Wisher>> findByInterview(@Valid @PathVariable int id) {
         Optional<Interview> interviewOptional = interviewService.findById(id);
         if (interviewOptional.isEmpty()) {
-            throw new SQLException("This interview is missing");
+            throw new ItemNotFoundException("Interview not found");
         }
         return ResponseEntity
                 .status(HttpStatus.OK)
