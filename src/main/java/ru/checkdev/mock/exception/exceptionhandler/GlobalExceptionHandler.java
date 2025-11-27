@@ -1,4 +1,4 @@
-package ru.checkdev.mock.exception;
+package ru.checkdev.mock.exception.exceptionhandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 import ru.checkdev.mock.error.message.ErrorMessage;
+import ru.checkdev.mock.exception.ItemNotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

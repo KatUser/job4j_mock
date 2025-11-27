@@ -12,18 +12,18 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers(
-                "/interview/**",
-                "/interviews/**",
-                "/wishers/**",
-                "/wisher/**",
-                "/interviews/**",
-                "/swagger-ui/**",
-                "/v3/**",
-                "/error/**",
-                "/dto/**",
-                "/feedback/**",
-                "/filter/**"
-        );
+        return (web) -> web.ignoring().anyRequest();
+//                "/interview/**",
+//                "/interviews/**",
+//                "/wishers/**",
+//                "/wisher/**",
+//                "/interviews/**",
+//                "/swagger-ui/**",
+//                "/v3/**",
+//                "/error/**",
+//                "/dto/**",
+//                "/feedback/**",
+//                "/filter/**"
+//        );
     }
 }

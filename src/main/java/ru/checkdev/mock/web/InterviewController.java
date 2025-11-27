@@ -1,6 +1,10 @@
 package ru.checkdev.mock.web;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +23,16 @@ public class InterviewController {
 
     private final InterviewService interviewService;
 
+    @Getter
+    private final Counter errorCounter;
+
+    @Autowired
+    public InterviewController(InterviewService interviewService, MeterRegistry meterRegistry) {
+        this.interviewService = interviewService;
+        this.errorCounter = meterRegistry.counter("errors");
+    }
+
+
     @PostMapping("/")
     public ResponseEntity<Interview> save(@Valid @RequestBody Interview interview) throws SQLException {
         return new ResponseEntity<>(
@@ -31,9 +45,12 @@ public class InterviewController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Interview> getById(@Valid @PathVariable int id) {
-        return interviewService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ItemNotFoundException("Item not found"));
+        var foundInterviews= interviewService.findById(id);
+        if (foundInterviews.isEmpty()) {
+            errorCounter.increment();
+            throw new ItemNotFoundException("Item not found");
+        }
+        return ResponseEntity.ok(foundInterviews.get());
     }
 
 
@@ -51,6 +68,7 @@ public class InterviewController {
 
         if (interviewService.findById(id).isEmpty()
                 || interviewService.findStatusById(statusId).isEmpty()) {
+            errorCounter.increment();
             throw new ItemNotFoundException("Item not found");
         }
 
@@ -62,6 +80,7 @@ public class InterviewController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Interview> delete(@Valid @PathVariable int id) {
         if (interviewService.findById(id).isEmpty()) {
+            errorCounter.increment();
             throw new ItemNotFoundException("Item not found");
         }
         Interview interview = new Interview();
@@ -69,4 +88,5 @@ public class InterviewController {
         return new ResponseEntity<>(interview,
                 interviewService.delete(interview) ? HttpStatus.OK : HttpStatus.NO_CONTENT);
     }
+
 }
